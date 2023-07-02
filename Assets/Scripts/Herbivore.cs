@@ -43,10 +43,20 @@ public class Herbivore : MonoBehaviour
             float angle = i * angleStep;
             Vector3 direction = Quaternion.Euler(0f, angle, 0f) * transform.forward;
 
+            if (angle >= 0f && angle <= 99f)
+            {
+                TurnLeft();
+            }
+            else if (angle >= 261f && angle <= 359f)
+            {
+                TurnRight();
+            }
+
             RaycastHit hit;
 
             if (Physics.Raycast(transform.position, direction, out hit, detectionRange))
             {
+
                 if (hit.collider.CompareTag("Carnivore"))
                 {
                     // Realizar acciones en respuesta al encuentro con un personaje carnívoro
@@ -60,6 +70,8 @@ public class Herbivore : MonoBehaviour
 
         }
     }
+
+
 
     public void UpdateDirection()
     {
@@ -78,6 +90,20 @@ public class Herbivore : MonoBehaviour
 
             changeDirectionTimer = changeDirectionInterval;
         }
+    }
+
+    public void TurnRight()
+    {
+        // Girar hacia la derecha sumando un ángulo específico
+        Quaternion rotation = Quaternion.Euler(0f, 30f, 0f);
+        currentDirection = rotation * transform.forward;
+    }
+
+    public void TurnLeft()
+    {
+        // Girar hacia la izquierda restando un ángulo específico
+        Quaternion rotation = Quaternion.Euler(0f, -30f, 0f);
+        currentDirection = rotation * transform.forward;
     }
 
     public Vector3 GetRandomDirection()
