@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SpawnerManager : MonoBehaviour
 {
@@ -6,8 +7,12 @@ public class SpawnerManager : MonoBehaviour
     public GameObject carnivorePrefab;
     public float spawnRange = 300f;
 
+    public List<GameObject> herbivoreList;
+    public List<GameObject> carnivoreList;
+
     private void Start()
     {
+        herbivoreList.Clear();
         SpawnCarnivore(200);
         SpawnHerbivore(200);
     }
@@ -18,7 +23,8 @@ public class SpawnerManager : MonoBehaviour
         {
             Vector3 spawnPosition = GetRandomSpawnPosition();
             Quaternion spawnRotation = GetRandomSpawnRotation();
-            Instantiate(herbivorePrefab, spawnPosition, spawnRotation);
+            GameObject herbivore = Instantiate(herbivorePrefab, spawnPosition, spawnRotation);
+            herbivoreList.Add(herbivore);
         }
     }
 
@@ -28,7 +34,8 @@ public class SpawnerManager : MonoBehaviour
         {
             Vector3 spawnPosition = GetRandomSpawnPosition();
             Quaternion spawnRotation = GetRandomSpawnRotation();
-            Instantiate(carnivorePrefab, spawnPosition, spawnRotation);
+            GameObject carnivore = Instantiate(carnivorePrefab, spawnPosition, spawnRotation);
+            carnivoreList.Add(carnivore);
         }
     }
 

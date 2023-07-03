@@ -69,6 +69,11 @@ MonoBehaviour:
   turnLeft: 0
   turnRight: 0
   walk: 0
+  spawnTimerDuration: 7
+  spawnTimer: 7
+  herbivorePrefab: {fileID: 3231881028153973061}
+  spawnerManager: {fileID: 9211265771572751336, guid: e4ec05a33c29c364bba8f0bbc441187b,
+    type: 3}
 --- !u!54 &3231881028153973114
 Rigidbody:
   m_ObjectHideFlags: 0

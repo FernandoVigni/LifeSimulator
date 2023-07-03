@@ -7,7 +7,8 @@ public class Carnivore : MonoBehaviour
     public float maxSpeed = 10f;
     public float detectionAngle = 25f;
     public float detectionRange = 10f;
-    public float killDistance = 3f; // Nueva variable para la distancia de matar
+    public float killDistance = 3f; 
+    public float maxDirectionChangeAngle = 30f;
     private Rigidbody rb;
     private Vector3 currentDirection;
 
@@ -45,12 +46,30 @@ public class Carnivore : MonoBehaviour
                 Debug.Log("Hay un Herbivore al frente");
                 if (Vector3.Distance(transform.position, hitForward.transform.position) <= killDistance)
                 {
-                    Destroy(hitForward.collider.gameObject);
-                    Debug.Log("Herbivore ha sido eliminado");
+                    Herbivore herbivore = hitForward.collider.GetComponent<Herbivore>();
+                    if (herbivore != null)
+                    {
+                        herbivore.OnDeath();
+                        Debug.Log("Herbivore ha sido eliminado");
+                    }
+                    else
+                    {
+                        Debug.Log("El objeto detectado no tiene el componente Herbivore");
+                    }
                 }
                 return; // Continuar caminando hacia adelante si hay un Herbivore
             }
+            else if (hitForward.collider.CompareTag("Wall"))
+            {
+                if (hitForward.collider.CompareTag("Wall"))
+                {
+                    Debug.Log("Raycast golpeó una pared. Esquivando...");
+                    currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
+                    return; // Detener la detección si hay una pared
+                }
+            }
         }
+
         Debug.DrawRay(transform.position, currentDirection * detectionRange, Color.red);
 
         // Raycasts hacia la izquierda
@@ -66,13 +85,21 @@ public class Carnivore : MonoBehaviour
                 if (hitLeft.collider.CompareTag("Herbivore"))
                 {
                     Debug.Log("Hay un Herbivore a la izquierda");
+                    Herbivore herbivore = hitLeft.collider.GetComponent<Herbivore>();
                     if (Vector3.Distance(transform.position, hitLeft.transform.position) <= killDistance)
                     {
-                        Destroy(hitLeft.collider.gameObject);
+                        herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
                     currentDirection = direction;
                     return; // Cambiar la dirección hacia el Herbivore detectado
+                }
+
+                if (hitLeft.collider.CompareTag("Wall"))
+                {
+                    Debug.Log("Raycast golpeó una pared. Esquivando...");
+                    currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
+                    return; // Detener la detección si hay una pared
                 }
             }
             Debug.DrawRay(transform.position, direction * detectionRange, Color.red);
@@ -91,11 +118,20 @@ public class Carnivore : MonoBehaviour
                 if (hitRight.collider.CompareTag("Herbivore"))
                 {
                     Debug.Log("Hay un Herbivore a la derecha");
+                    Herbivore herbivore = hitRight.collider.GetComponent<Herbivore>();
                     if (Vector3.Distance(transform.position, hitRight.transform.position) <= killDistance)
                     {
-                        Destroy(hitRight.collider.gameObject);
+                        herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
+
+                    if (hitRight.collider.CompareTag("Wall"))
+                    {
+                        Debug.Log("Raycast golpeó una pared. Esquivando...");
+                        currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
+                        return; // Detener la detección si hay una pared
+                    }
+
                     currentDirection = direction;
                     return; // Cambiar la dirección hacia el Herbivore detectado
                 }
