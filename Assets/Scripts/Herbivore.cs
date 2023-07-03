@@ -10,6 +10,10 @@ public class Herbivore : MonoBehaviour
     public float changeDirectionInterval;
     public float maxDirectionChangeAngle;
 
+    public bool turnLeft;
+    public bool turnRight;
+    public bool walk;
+
     private Rigidbody rb;
     private Vector3 currentDirection;
     private float changeDirectionTimer;
@@ -26,7 +30,6 @@ public class Herbivore : MonoBehaviour
     {
         Move();
         CastRays();
-        UpdateDirection();
     }
 
     public void Move()
@@ -36,75 +39,49 @@ public class Herbivore : MonoBehaviour
 
     public void CastRays()
     {
-        // Disparar los raycasts en direcciones equidistantes
-        float angleStep = 360f / raycastCount;
+        float angleIncrement = 360f / raycastCount; // Calcular el incremento de ángulo entre los rayos
+        float currentAngle = 0f; // Ángulo inicial
+
+        // Obtener la rotación del personaje
+        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+
         for (int i = 0; i < raycastCount; i++)
         {
-            float angle = i * angleStep;
-            Vector3 direction = Quaternion.Euler(0f, angle, 0f) * transform.forward;
+            // Calcular la dirección del rayo en función del ángulo actual y la rotación del personaje
+            Quaternion rayRotation = Quaternion.Euler(0f, currentAngle, 0f);
+            Vector3 rayDirection = rotation * rayRotation * currentDirection;
 
-            if (angle >= 0f && angle <= 99f)
-            {
-                TurnLeft();
-            }
-            else if (angle >= 261f && angle <= 359f)
-            {
-                TurnRight();
-            }
-
+            // Lanzar el rayo
             RaycastHit hit;
-
-            if (Physics.Raycast(transform.position, direction, out hit, detectionRange))
+            if (Physics.Raycast(transform.position, rayDirection, out hit, detectionRange))
             {
-
-                if (hit.collider.CompareTag("Carnivore"))
+                if (i >= 0 && i < 7)
                 {
-                    // Realizar acciones en respuesta al encuentro con un personaje carnívoro
-                    // Puedes implementar el comportamiento específico aquí, como huir o interactuar con el carnívoro
-                    // Recuerda que esto es solo un ejemplo y deberás adaptarlo a tu lógica específica.
-                    Debug.Log("Encuentro con un personaje carnívoro");
+                    // Girar a la izquierda
+                    Debug.Log("Está a tu derecha el Carnívoro, deberías doblar a la izquierda");
+                    currentDirection = Quaternion.Euler(0f, -maxDirectionChangeAngle, 0f) * currentDirection;
+                    break;
                 }
+                else if (i >= 14 && i <= 20)
+                {
+                    // Girar a la derecha
+                    Debug.Log("Está a tu izquierda el Carnívoro, deberías doblar a la derecha");
+                    currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
+                    break;
+                }
+                // Si el rayo golpea algo, puedes hacer algo aquí, como cambiar la dirección del personaje
+                // Por ejemplo, puedes imprimir el nombre del objeto golpeado
+                Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
             }
+
             // Dibujar el rayo en la escena
-            Debug.DrawRay(transform.position, direction * detectionRange, Color.red);
+            Debug.DrawRay(transform.position, rayDirection * detectionRange, Color.red);
 
+            // Incrementar el ángulo para el siguiente rayo
+            currentAngle += angleIncrement;
         }
     }
 
-
-
-    public void UpdateDirection()
-    {
-        changeDirectionTimer -= Time.deltaTime;
-        if (changeDirectionTimer <= 0f)
-        {
-            float angle = Random.Range(-maxDirectionChangeAngle, maxDirectionChangeAngle);
-
-            // Obtener el ángulo resultante dentro del rango de ±30 grados respecto al ángulo actual
-            float newAngle = currentAngle + angle;
-            newAngle = Mathf.Clamp(newAngle, currentAngle - 30f, currentAngle + 30f);
-
-            // Convertir el ángulo resultante en una nueva dirección
-            Quaternion rotation = Quaternion.Euler(0f, newAngle, 0f);
-            currentDirection = rotation * transform.forward;
-
-            changeDirectionTimer = changeDirectionInterval;
-        }
-    }
-
-    public void TurnRight()
-    {
-        // Girar hacia la derecha sumando un ángulo específico
-        Quaternion rotation = Quaternion.Euler(0f, 30f, 0f);
-        currentDirection = rotation * transform.forward;
-    }
-
-    public void TurnLeft()
-    {
-        // Girar hacia la izquierda restando un ángulo específico
-        Quaternion rotation = Quaternion.Euler(0f, -30f, 0f);
-        currentDirection = rotation * transform.forward;
-    }
 
     public Vector3 GetRandomDirection()
     {
