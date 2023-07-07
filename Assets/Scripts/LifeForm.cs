@@ -9,6 +9,7 @@ public class LifeForm : MonoBehaviour
     public float maxDirectionChangeAngle;
     public float maxSpeed;
     public bool isMoving;
+    public SpawnerManager spawnerManager; // Referencia al SpawnerManager
 
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class LifeForm : MonoBehaviour
 
     private void Start()
     {
+        spawnerManager = FindObjectOfType<SpawnerManager>();
         currentDirection = GetRandomDirection();
     }
 
