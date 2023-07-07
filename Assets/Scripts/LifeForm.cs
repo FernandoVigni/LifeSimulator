@@ -9,6 +9,7 @@ public class LifeForm : MonoBehaviour
     public float maxDirectionChangeAngle;
     public float maxSpeed;
     public bool isMoving;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();

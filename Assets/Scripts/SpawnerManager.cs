@@ -15,6 +15,7 @@ public class SpawnerManager : MonoBehaviour
     private void Start()
     {
         herbivoreList.Clear();
+        carnivoreList.Clear();
         SpawnCarnivore(carnivores);
         SpawnHerbivore(herbivores);
     }

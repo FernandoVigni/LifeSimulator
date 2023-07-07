@@ -6,12 +6,47 @@ public class Carnivore : LifeForm
 {
     public float detectionAngle;
     public float detectionRange;
-    public float killDistance; 
+    public float killDistance;
+    public float energy;
+    public float currentDigestion;
+    public float resetDigestionTimer;
+    public float energyToSplit;
 
     private void Update()
     {
         DetectHerbivore();
         Move();
+    }
+
+    public void DecreseEnergy() 
+    {
+        energy -= Time.deltaTime;
+        if (energy <= 0) 
+        {
+            //quitar de la lista
+        }
+    }
+
+    public void DecreseDigestionTimer() 
+    {
+        if (currentDigestion > 0) 
+        {
+            currentDigestion -= Time.deltaTime;
+        }
+    }
+
+    public void ReseteDigestionTimer() 
+    {
+        currentDigestion = resetDigestionTimer;
+    }
+
+    public void IncreseSpawnerCarnivoreEnergy() 
+    {
+        energyToSplit += 50;
+        if (energyToSplit >= 100) 
+        {
+            energyToSplit = 0;
+        }
     }
 
     public void DetectHerbivore()
@@ -25,11 +60,13 @@ public class Carnivore : LifeForm
             if (hitForward.collider.CompareTag("Herbivore"))
             {
                 Debug.Log("Hay un Herbivore al frente");
-                if (Vector3.Distance(transform.position, hitForward.transform.position) <= killDistance)
+                if (Vector3.Distance(transform.position, hitForward.transform.position) <= killDistance && currentDigestion <= 0)
                 {
                     Herbivore herbivore = hitForward.collider.GetComponent<Herbivore>();
                     if (herbivore != null)
                     {
+                        ReseteDigestionTimer();
+                        IncreseSpawnerCarnivoreEnergy();
                         herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
@@ -48,7 +85,7 @@ public class Carnivore : LifeForm
 
         Debug.DrawRay(transform.position, currentDirection * detectionRange, Color.red);
 
-        // Raycasts hacia la izquierda
+                // Raycasts hacia la izquierda
         for (int i = 1; i <= 2; i++)
         {
             float angle = -halfDetectionAngle * i;
@@ -64,11 +101,12 @@ public class Carnivore : LifeForm
                     Herbivore herbivore = hitLeft.collider.GetComponent<Herbivore>();
                     if (Vector3.Distance(transform.position, hitLeft.transform.position) <= killDistance)
                     {
+                        ReseteDigestionTimer();
+                        IncreseSpawnerCarnivoreEnergy();
                         herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
-                    currentDirection = direction;
-                    return; // Cambiar la dirección hacia el Herbivore detectado
+                    return; // Continuar caminando hacia adelante si hay un Herbivore a la izquierda
                 }
 
                 if (hitLeft.collider.CompareTag("Wall"))
@@ -78,6 +116,7 @@ public class Carnivore : LifeForm
             }
             Debug.DrawRay(transform.position, direction * detectionRange, Color.red);
         }
+
 
         // Raycasts hacia la derecha
         for (int i = 1; i <= 2; i++)
@@ -95,6 +134,8 @@ public class Carnivore : LifeForm
                     Herbivore herbivore = hitRight.collider.GetComponent<Herbivore>();
                     if (Vector3.Distance(transform.position, hitRight.transform.position) <= killDistance)
                     {
+                        ReseteDigestionTimer();
+                        IncreseSpawnerCarnivoreEnergy();
                         herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
@@ -103,8 +144,6 @@ public class Carnivore : LifeForm
                     {
                         Debug.Log("Raycast golpeó una pared...");
                     }
-
-                    currentDirection = direction;
                     return; // Cambiar la dirección hacia el Herbivore detectado
                 }
             }
