@@ -60,9 +60,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cdcb90a5268de044bcbc1d39425dc9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentDirection: {x: 0, y: 0, z: 0}
+  maxDirectionChangeAngle: 5
   maxSpeed: 20
+  isMoving: 1
   detectionAngle: 25
   detectionRange: 30
+  killDistance: 3
 --- !u!54 &8236877212459331362
 Rigidbody:
   m_ObjectHideFlags: 0

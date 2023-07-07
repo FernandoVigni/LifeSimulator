@@ -2,35 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Carnivore : MonoBehaviour
+public class Carnivore : LifeForm
 {
-    public float maxSpeed = 10f;
-    public float detectionAngle = 25f;
-    public float detectionRange = 10f;
-    public float killDistance = 3f; 
-    public float maxDirectionChangeAngle = 30f;
-    private Rigidbody rb;
-    private Vector3 currentDirection;
-
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
-
-    private void Start()
-    {
-        currentDirection = transform.forward;
-    }
+    public float detectionAngle;
+    public float detectionRange;
+    public float killDistance; 
 
     private void Update()
     {
-        Move();
         DetectHerbivore();
-    }
-
-    public void Move()
-    {
-        rb.velocity = currentDirection * maxSpeed;
+        Move();
     }
 
     public void DetectHerbivore()
@@ -60,13 +41,8 @@ public class Carnivore : MonoBehaviour
                 return; // Continuar caminando hacia adelante si hay un Herbivore
             }
             else if (hitForward.collider.CompareTag("Wall"))
-            {
-                if (hitForward.collider.CompareTag("Wall"))
-                {
-                    Debug.Log("Raycast golpeó una pared. Esquivando...");
-                    currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
-                    return; // Detener la detección si hay una pared
-                }
+            {               
+                Debug.Log("Raycast golpeó una pared...");
             }
         }
 
@@ -97,9 +73,7 @@ public class Carnivore : MonoBehaviour
 
                 if (hitLeft.collider.CompareTag("Wall"))
                 {
-                    Debug.Log("Raycast golpeó una pared. Esquivando...");
-                    currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
-                    return; // Detener la detección si hay una pared
+                    Debug.Log("Raycast golpeó una pared...");
                 }
             }
             Debug.DrawRay(transform.position, direction * detectionRange, Color.red);
@@ -127,9 +101,7 @@ public class Carnivore : MonoBehaviour
 
                     if (hitRight.collider.CompareTag("Wall"))
                     {
-                        Debug.Log("Raycast golpeó una pared. Esquivando...");
-                        currentDirection = Quaternion.Euler(0f, maxDirectionChangeAngle, 0f) * currentDirection;
-                        return; // Detener la detección si hay una pared
+                        Debug.Log("Raycast golpeó una pared...");
                     }
 
                     currentDirection = direction;

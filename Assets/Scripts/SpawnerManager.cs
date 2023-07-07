@@ -6,6 +6,8 @@ public class SpawnerManager : MonoBehaviour
     public GameObject herbivorePrefab;
     public GameObject carnivorePrefab;
     public float spawnRange = 300f;
+    public int carnivores;
+    public int herbivores;
 
     public List<GameObject> herbivoreList;
     public List<GameObject> carnivoreList;
@@ -13,8 +15,8 @@ public class SpawnerManager : MonoBehaviour
     private void Start()
     {
         herbivoreList.Clear();
-        SpawnCarnivore(200);
-        SpawnHerbivore(200);
+        SpawnCarnivore(carnivores);
+        SpawnHerbivore(herbivores);
     }
 
     public void SpawnHerbivore(int amount)
