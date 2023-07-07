@@ -12,6 +12,7 @@ public class Carnivore : LifeForm
     public float detectionRange;
     public float killDistance;
     public float runEnergy;
+    public float runEnergyReset;
     public float currentDigestion;
     public float resetDigestionTimer;
     public float energyToSplit;
@@ -21,6 +22,7 @@ public class Carnivore : LifeForm
         DetectHerbivore();
         SpendEnergyToMove();
         Move();
+        DecreseDigestionTimer();
     }
 
     public void SpendEnergyToMove() 
@@ -63,6 +65,11 @@ public class Carnivore : LifeForm
         }
     }
 
+    public void ResetRunEnergy() 
+    {
+        runEnergy = runEnergyReset;
+    }
+
     public void DetectHerbivore()
     {
         float halfDetectionAngle = detectionAngle / 2f;
@@ -71,16 +78,16 @@ public class Carnivore : LifeForm
         RaycastHit hitForward;
         if (Physics.Raycast(transform.position, currentDirection, out hitForward, detectionRange))
         {
-            if (hitForward.collider.CompareTag("Herbivore"))
+            if (hitForward.collider.gameObject.CompareTag("Herbivore"))
             {
                 Debug.Log("Hay un Herbivore al frente");
+
                 if (Vector3.Distance(transform.position, hitForward.transform.position) <= killDistance && currentDigestion <= 0)
                 {
-                    Herbivore herbivore = hitForward.collider.GetComponent<Herbivore>();
+                    Herbivore herbivore = hitForward.collider.gameObject.GetComponent<Herbivore>();
                     if (herbivore != null)
                     {
-                        ReseteDigestionTimer();
-                        IncreseSpawnerCarnivoreEnergy();
+                        DigestionValidation();
                         herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
@@ -94,9 +101,9 @@ public class Carnivore : LifeForm
             else if (hitForward.collider.CompareTag("Wall"))
             {
                 distanceToWall = hitForward.distance;
-                if(distanceToWall < 3) 
+                if (distanceToWall < 3)
                 {
-                    OnDeath(); 
+                    OnDeath();
                 }
             }
         }
@@ -113,14 +120,13 @@ public class Carnivore : LifeForm
             RaycastHit hitLeft;
             if (Physics.Raycast(transform.position, direction, out hitLeft, detectionRange))
             {
-                if (hitLeft.collider.CompareTag("Herbivore"))
+                if (hitLeft.collider.gameObject.CompareTag("Herbivore"))
                 {
                     Debug.Log("Hay un Herbivore a la izquierda");
-                    Herbivore herbivore = hitLeft.collider.GetComponent<Herbivore>();
-                    if (Vector3.Distance(transform.position, hitLeft.transform.position) <= killDistance)
+                    Herbivore herbivore = hitLeft.collider.gameObject.GetComponent<Herbivore>();
+                    if (Vector3.Distance(transform.position, hitLeft.transform.position) <= killDistance && currentDigestion <= 0)
                     {
-                        ReseteDigestionTimer();
-                        IncreseSpawnerCarnivoreEnergy();
+                        DigestionValidation();
                         herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
@@ -148,31 +154,41 @@ public class Carnivore : LifeForm
             RaycastHit hitRight;
             if (Physics.Raycast(transform.position, direction, out hitRight, detectionRange))
             {
-                if (hitRight.collider.CompareTag("Herbivore"))
+                if (hitRight.collider.gameObject.CompareTag("Herbivore"))
                 {
                     Debug.Log("Hay un Herbivore a la derecha");
-                    Herbivore herbivore = hitRight.collider.GetComponent<Herbivore>();
+                    Herbivore herbivore = hitRight.collider.gameObject.GetComponent<Herbivore>();
                     if (Vector3.Distance(transform.position, hitRight.transform.position) <= killDistance)
                     {
-                        ReseteDigestionTimer();
-                        IncreseSpawnerCarnivoreEnergy();
+                        DigestionValidation();
                         herbivore.OnDeath();
                         Debug.Log("Herbivore ha sido eliminado");
                     }
-                    else if (hitRight.collider.CompareTag("Wall"))
+                    return; // Continuar caminando hacia adelante si hay un Herbivore a la derecha
+                }
+                else if (hitRight.collider.CompareTag("Wall"))
+                {
+                    distanceToWall = hitRight.distance;
+                    if (distanceToWall < 3)
                     {
-                        distanceToWall = hitRight.distance;
-                        if (distanceToWall < 3)
-                        {
-                            OnDeath();
-                        }
+                        OnDeath();
                     }
-                    return; // Cambiar la dirección hacia el Herbivore detectado
                 }
             }
             Debug.DrawRay(transform.position, direction * detectionRange, Color.red);
         }
     }
+
+    public void DigestionValidation() 
+    {
+        if (currentDigestion <= 0)
+        {
+            ResetRunEnergy();
+            IncreseSpawnerCarnivoreEnergy();
+        }
+        ReseteDigestionTimer();
+    }
+
     public void OnDeath()
     {
         spawnerManager.carnivoreList.Remove(this.gameObject);

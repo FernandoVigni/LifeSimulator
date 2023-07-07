@@ -47,7 +47,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.25, z: 0}
 --- !u!114 &8236877212459331363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,15 +62,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentDirection: {x: 0, y: 0, z: 0}
   maxDirectionChangeAngle: 5
-  maxSpeed: 30
+  maxSpeed: 40
   isMoving: 1
   spawnerManager: {fileID: 9211265771572751336, guid: e4ec05a33c29c364bba8f0bbc441187b,
     type: 3}
   detectionAngle: 25
   detectionRange: 30
-  killDistance: 3
-  runEnergy: 100
-  currentDigestion: 6
+  killDistance: 10
+  runEnergy: 15
+  runEnergyReset: 15
+  currentDigestion: 0
   resetDigestionTimer: 1.5
   energyToSplit: 0
 --- !u!54 &8236877212459331362

@@ -1003,12 +1003,17 @@ PrefabInstance:
     - target: {fileID: 9211265771572751336, guid: e4ec05a33c29c364bba8f0bbc441187b,
         type: 3}
       propertyPath: carnivores
-      value: 5
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 9211265771572751336, guid: e4ec05a33c29c364bba8f0bbc441187b,
         type: 3}
       propertyPath: herbivores
-      value: 5
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211265771572751336, guid: e4ec05a33c29c364bba8f0bbc441187b,
+        type: 3}
+      propertyPath: spawnRange
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 9211265771572751336, guid: e4ec05a33c29c364bba8f0bbc441187b,
         type: 3}
